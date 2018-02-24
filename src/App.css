@@ -1,0 +1,51 @@
+.App {
+  text-align: center;
+}
+
+#spinner {
+  animation: App-logo-spin infinite 20s linear;
+}
+
+#or{
+  padding: 1em;
+}
+
+.signupForm{
+  align-self: center;
+  padding-left: 40vw;
+}
+
+.App-header {
+  background-color: #222;
+  height: 180px;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-sspin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.headerPic{
+  height: 5em;
+}
+
+li {
+  color: black;
+  font-size: 2em;
+  font-weight: bold;
+  text-align: start;
+}
+li:hover{
+  cursor: pointer;
+  color: grey;
+}
