@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import chessBoardPicture from './images/chessboard_background.png'
 import knightPicture from './images/knight.jpg'
 import chessIcon from './images/chess_icon.png'
+import hyPicture from './images/helsingin_yliopisto_logo.png'
 import lichessService from './services/lichess'
 import chessDotComService from './services/chessDotCom'
 import Login from './comps/Login'
@@ -96,28 +97,26 @@ class App extends Component {
                 ", Lichess " + this.state.user.lichess.elo
             gamesPlayed = "Pelattuja pelejä verkossa yhteensä: " +
                 (this.state.user.lichess.total_games + this.state.user.chessDotCom.total_games)
-            logoutButton = <button onClick={this.logout()}>logout</button>
+            logoutButton = <button onClick={this.logout()}>Kirjaudu ulos</button>
         }else{
             login = <Login loginFunction={this.logUserIn()}
                            nameFunction={this.handleUsernameChange()}
                            pswFunction={this.handlePasswordChange()}/>
             signup = <Signup className="signupForm" />
-            or = "TAI liity mukaan: "
+            or = "tai LIITY mukaan: "
         }
-
-        /*<Login loginFunction={this.logUserIn()}
-        nameFunction={this.handleUsernameChange()}
-        pswFunction={this.handlePasswordChange()}/>;*/
 
         return (
             <div className="App">
                 <header className="App-header">
-                    <h1 className="App-title">yo-chess-company</h1>
+                    <h1 className="App-title">yo-chess</h1>
                     <p className="App-intro">
-                        Helsingin yliopiston Kumpulan chess-pelurit.
+                        Helsingin yliopiston Kumpulan kampuksen shakkipelurit.
                     </p>
                     <div id="headerPictures">
                         <img className="headerPic" src={chessIcon} alt="Moro"/>
+                        <img className="headerPic" src={chessBoardPicture} alt="Moro"/>
+                        <img className="headerPic" src={hyPicture} alt="Moro"/>
                         <img className="headerPic" src={chessBoardPicture} alt="Moro"/>
                         <img className="headerPic" src={knightPicture} alt="Moro"/>
                     </div>
@@ -126,11 +125,11 @@ class App extends Component {
                 <p><b>{greeting} {logoutButton}</b></p>
                 <p>{currentElos}</p>
                 <p>{gamesPlayed}</p>
+
                 <div>{login}</div>
                 <div id="or">{or}</div>
-                <div className="signupForm">{signup}</div>
+                <div>{signup}</div>
                 <ActionBar/>
-
             </div>
         );
     }

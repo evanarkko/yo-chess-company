@@ -5,7 +5,7 @@ const Login = ({loginFunction, nameFunction, pswFunction}) => {
             <form onSubmit={loginFunction}>
                 <input type="text" placeholder="username" onChange={nameFunction}/>
                 <input type="password" placeholder="password" onChange={pswFunction}/>
-                <button type="submit">Login</button>
+                <button type="submit">Kirjaudu</button>
             </form>
     )
 }

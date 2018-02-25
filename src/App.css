@@ -1,3 +1,4 @@
+
 .App {
   text-align: center;
 }
@@ -8,22 +9,20 @@
 
 #or{
   padding: 1em;
+  font-weight: bold;
 }
 
-.signupForm{
-  align-self: center;
-  padding-left: 40vw;
-}
+
 
 .App-header {
   background-color: #222;
-  height: 180px;
+  height: 15em;
   padding: 20px;
   color: white;
 }
 
 .App-title {
-  font-size: 1.5em;
+  font-size: 2.5em;
 }
 
 .App-intro {
@@ -39,13 +38,41 @@
   height: 5em;
 }
 
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin:0;
+}
+
 li {
-  color: black;
+  color: blue;
+  background-color: black;
+  border: solid white 1px;
   font-size: 2em;
   font-weight: bold;
   text-align: start;
 }
 li:hover{
   cursor: pointer;
-  color: grey;
+  color: lightgrey;
+}
+
+input{
+  border: solid black 1px;
+  font-size: 1em;
+  margin: 0.5px;
+}
+button{
+  color: #222222;
+  background-color: white;
+  border: solid 1px;
+  font-size: 1em;
+  font-weight: bold;
+  margin: 0.5em;
+}
+
+button:hover{
+  cursor: pointer;
+  background-color: #222222;
+  color: white;
 }

@@ -6,11 +6,16 @@ const Signup = ({
                 }) => {
     return (
         <form onSubmit={signupFunction}>
-            <table>
+            <table align="center">
                 <tbody>
                 <tr>
                     <td>
-                        <input type="text" placeholder="username" onChange={nameFunction}/>
+                        <input type="text" placeholder="nimi" onChange={nameFunction}/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" placeholder="käyttäjänimi" onChange={nameFunction}/>
                     </td>
                 </tr>
                 <tr>
@@ -18,34 +23,35 @@ const Signup = ({
                         <input type="email" placeholder="email" onChange={nameFunction}/>
                     </td>
                 </tr>
+
                 <tr>
                     <td>
-                        <input type="password" placeholder="password" onChange={pswFunction}/>
+                        <input type="text" placeholder="lichess.org käyttäjä"/>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <input type="password" placeholder="password again"/>
+                        <input type="text" placeholder="chess.com käyttäjä"/>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <input type="text" placeholder="lichess (optional)"/>
+                        <input type="text" placeholder="Pääaine"/>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <input type="text" placeholder="chess.com (optional)"/>
+                        <input type="password" placeholder="salasana" onChange={pswFunction}/>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <input type="text" placeholder="Major (cs/math/chem...)"/>
+                        <input type="password" placeholder="salasana uudestaan"/>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <button type="submit">Sign up</button>
+                        <button type="submit">Luo käyttäjä</button>
                     </td>
                 </tr>
                 </tbody>
