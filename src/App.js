@@ -8,8 +8,9 @@ import chessDotComService from './services/chessDotCom'
 import Login from './comps/Login'
 import Signup from './comps/Signup'
 import ActionBar from './comps/ActionBar'
-
+import Profile from './comps/profileView'
 import './App.css';
+import axios from 'axios'
 
 class App extends Component {
     constructor() {
@@ -17,19 +18,21 @@ class App extends Component {
         this.state = {
             userLoggedIn: false,
             user: {
-                name: "Evan",
+                name: "",
                 password: "",
                 lichess: {
-                    name:"eamiller",
+                    name:"",
                     elo: "",
                     total_games: 0
                 },
                 chessDotCom: {
-                    name: "Evanschess1",
-                    elo: "1250",
+                    name: "",
+                    elo: "",
                     total_games: 0
                 },
-                elo: 1400
+                elo: 1400,
+                r2play: false,
+                major: ""
             }
         }
     }
@@ -57,12 +60,32 @@ class App extends Component {
             user.chessDotCom.total_games = count
             this.setState({user : user})
         })
+        console.log("Mount")
     }
 
-    logUserIn = () => (event) => {
+
+    logUserIn = () => async (event) => {
         event.preventDefault()
-        console.log('User getz logged in')
-        this.setState({userLoggedIn: true})
+        const loginable = {
+            name: this.state.user.name,
+            password: this.state.user.password
+        }
+        const request = axios.post("http://localhost:2000/api/users/login", loginable)
+        const data = await request.then(response => response.data)
+        if(data.name){
+            console.log(data)
+            const user = this.state.user
+            user.name = data.name
+            user.chessDotCom.name = data.chessDotComName
+            user.lichess.name = data.lichessName
+            user.major = data.major
+            this.setState({user: user})
+            this.setState({userLoggedIn: true})
+            this.componentWillMount()
+        }else{
+            console.log("fail")
+        }
+
     }
 
     handleUsernameChange = () => (event) => {
@@ -77,33 +100,93 @@ class App extends Component {
         this.setState({user: user})
     }
 
+    handleLichessNameChange = () => (event) => {
+        const user = this.state.user
+        user.lichess.name = event.target.value
+        this.setState({user: user})
+    }
+    handleChessDotComNameChange = () => (event) => {
+        const user = this.state.user
+        user.chessDotCom.name = event.target.value
+        this.setState({user: user})
+    }
+    handleMajorChange = () => (event) => {
+        const user = this.state.user
+        user.major = event.target.value
+        this.setState({user: user})
+    }
+    signUp = () => async (event) => {
+        event.preventDefault()
+        const signable = {
+            name: this.state.user.name,
+            chessDotComName: this.state.user.chessDotCom.name,
+            lichessName: this.state.user.lichess.name,
+            major: this.state.user.major,
+            password: this.state.user.password
+        }
+        const request = axios.post("http://localhost:2000/api/users", signable)
+        const data = await request.then(response => response.data)
+        console.log(data)
+    }
+
     logout = () => (event) => {
+        const user = {
+            name: "",
+                password: "",
+                lichess: {
+                name:"",
+                    elo: "",
+                    total_games: 0
+            },
+            chessDotCom: {
+                name: "",
+                    elo: "",
+                    total_games: 0
+            }
+        }
+        this.setState({user})
         this.setState({userLoggedIn: false})
     }
 
+    toggleR2P = () => () => {
+        const user = this.state.user
+        const ready = user.r2play
+        if(ready){
+            user.r2play = false
+        }else{
+            user.r2play = true
+        }
+        this.setState({user: user})
+    }
+
     render() {
-        let greeting = ""
-        let currentElos = ""
-        let gamesPlayed = ""
-        let logoutButton = ""
+        let profile = ""
+
 
         let login = ""
         let signup = ""
         let or = ""
+        let sayLogin = ""
 
         if(this.state.userLoggedIn){
-            greeting =  "Kirjautunut nimellä " + this.state.user.name
-            currentElos = "Tämänhetkinen Blixt elosi: Chess.com " + this.state.user.chessDotCom.elo +
-                ", Lichess " + this.state.user.lichess.elo
-            gamesPlayed = "Pelattuja pelejä verkossa yhteensä: " +
-                (this.state.user.lichess.total_games + this.state.user.chessDotCom.total_games)
-            logoutButton = <button onClick={this.logout()}>Kirjaudu ulos</button>
+            profile = <Profile
+                            user={this.state.user}
+                            logoutFunc={this.logout()}
+                            toggleR2P={this.toggleR2P()}/>
         }else{
+            sayLogin = "Kirjaudu sisään"
             login = <Login loginFunction={this.logUserIn()}
                            nameFunction={this.handleUsernameChange()}
                            pswFunction={this.handlePasswordChange()}/>
-            signup = <Signup className="signupForm" />
+            signup = <Signup className="signupForm"
+                             nameFunction={this.handleUsernameChange()}
+                             pswFunction={this.handlePasswordChange()}
+                             lichessFunction={this.handleLichessNameChange()}
+                             chessDotComFunction={this.handleChessDotComNameChange()}
+                             majorFunction={this.handleMajorChange()}
+                            signupFunction={this.signUp()}/>
             or = "tai LIITY mukaan: "
+
         }
 
         return (
@@ -111,7 +194,7 @@ class App extends Component {
                 <header className="App-header">
                     <h1 className="App-title">yo-chess</h1>
                     <p className="App-intro">
-                        Helsingin yliopiston Kumpulan kampuksen shakkipelurit.
+                        Kumpulan kampuksen shakinpelaajat.
                     </p>
                     <div id="headerPictures">
                         <img className="headerPic" src={chessIcon} alt="Moro"/>
@@ -122,12 +205,11 @@ class App extends Component {
                     </div>
                 </header>
 
-                <p><b>{greeting} {logoutButton}</b></p>
-                <p>{currentElos}</p>
-                <p>{gamesPlayed}</p>
 
+                {profile}
+                <div className="loginDialog">{sayLogin}</div>
                 <div>{login}</div>
-                <div id="or">{or}</div>
+                <div className="loginDialog">{or}</div>
                 <div>{signup}</div>
                 <ActionBar/>
             </div>

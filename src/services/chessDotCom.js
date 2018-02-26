@@ -21,14 +21,25 @@ const getTotalGamesPlayed = (username) => {//DOESNT RETURN PROMISE BUT MAKES THE
     return request
         .then(res => res.data)
         .then(data => {
-            const daily = data.chess_daily.record;
-            const rapid = data.chess_rapid.record;
-            const blitz = data.chess_blitz.record;
-            const bullet = data.chess_bullet.record;
-            sum += daily.win + daily.loss + daily.draw;
-            sum += rapid.win + rapid.loss + rapid.draw;
-            sum += blitz.win + blitz.loss + blitz.draw;
-            sum += bullet.win + bullet.loss + bullet.draw;
+            if(data.chess_daily && data.chess_daily.record){
+                const daily = data.chess_daily.record;
+                sum += daily.win + daily.loss + daily.draw;
+            }
+            if(data.chess_rapid && data.chess_rapid.record){
+                const rapid = data.chess_rapid.record;
+                sum += rapid.win + rapid.loss + rapid.draw;
+            }
+            if(data.chess_blitz && data.chess_blitz.record){
+                const blitz = data.chess_blitz.record;
+                sum += blitz.win + blitz.loss + blitz.draw;
+            }
+            if(data.chess_bullet && data.chess_bullet.record){
+                const bullet = data.chess_bullet.record;
+                sum += bullet.win + bullet.loss + bullet.draw;
+            }
+
+
+
         }).then(() => {
             return sum;
         }).catch((error) => {

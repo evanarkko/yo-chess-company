@@ -2,7 +2,7 @@ import React from 'react'
 
 const Signup = ({
                     signupFunction, nameFunction,
-                    pswFunction, lichessFunction, chessDotComFunction
+                    pswFunction, lichessFunction, chessDotComFunction, majorFunction
                 }) => {
     return (
         <form onSubmit={signupFunction}>
@@ -15,38 +15,22 @@ const Signup = ({
                 </tr>
                 <tr>
                     <td>
-                        <input type="text" placeholder="käyttäjänimi" onChange={nameFunction}/>
+                        <input type="text" placeholder="Pääaine" onChange={majorFunction}/>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <input type="email" placeholder="email" onChange={nameFunction}/>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <input type="text" placeholder="lichess.org käyttäjä"/>
+                        <input type="text" placeholder="lichess.org käyttäjä" onChange={lichessFunction}/>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <input type="text" placeholder="chess.com käyttäjä"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="text" placeholder="Pääaine"/>
+                        <input type="text" placeholder="chess.com käyttäjä" onChange={chessDotComFunction}/>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <input type="password" placeholder="salasana" onChange={pswFunction}/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="password" placeholder="salasana uudestaan"/>
                     </td>
                 </tr>
                 <tr>

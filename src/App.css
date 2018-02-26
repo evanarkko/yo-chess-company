@@ -7,7 +7,7 @@
   animation: App-logo-spin infinite 20s linear;
 }
 
-#or{
+.loginDialog{
   padding: 1em;
   font-weight: bold;
 }
@@ -75,4 +75,21 @@ button:hover{
   cursor: pointer;
   background-color: #222222;
   color: white;
+}
+
+.eloTable{
+  border: solid 1px black;
+}
+
+.pelihalukas{
+  color: green;
+}
+
+.pelivalmis_button{
+  color: green;
+  background-color: white;
+}
+.pelivalmis_button:hover{
+  color: white;
+  background-color: green;
 }
