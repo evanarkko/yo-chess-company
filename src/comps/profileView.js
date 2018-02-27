@@ -1,8 +1,8 @@
 import React from 'react'
 
 const Profile = ({user, logoutFunc, toggleR2P}) => {
-    const greeting =  "Kirjautunut nimellä " + user.name
-    const gamesPlayed = "Pelattuja pelejä verkossa yhteensä: " +
+    const greeting =  "Kirjautunut jäsenenä " + user.name
+    const gamesPlayedOnline = "Pelattuja pelejä verkossa: " +
         (user.lichess.total_games + user.chessDotCom.total_games)
     const logoutButton = <button onClick={logoutFunc}>Kirjaudu ulos</button>
     let togglePlayButton = <button className="pelivalmis_button" onClick={toggleR2P}>pelivalmis</button>
@@ -11,7 +11,7 @@ const Profile = ({user, logoutFunc, toggleR2P}) => {
         <div>
             <p><b>{greeting} {logoutButton} </b></p>
             <p className="pelihalukas"><i>{user.r2play ? " Olet valmiina pelaamaan" : ""}</i>{togglePlayButton}</p>
-            <p>{gamesPlayed}</p>
+            <p>{gamesPlayedOnline}</p>
             <div className="elo">
 
                 <table className="eloTable" align="center">

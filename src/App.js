@@ -7,7 +7,7 @@ import lichessService from './services/lichess'
 import chessDotComService from './services/chessDotCom'
 import Login from './comps/Login'
 import Signup from './comps/Signup'
-import ActionBar from './comps/ActionBar'
+import Info from './comps/publicInfo'
 import Profile from './comps/profileView'
 import './App.css';
 import axios from 'axios'
@@ -16,6 +16,7 @@ class App extends Component {
     constructor() {
         super()
         this.state = {
+            info: [],
             userLoggedIn: false,
             user: {
                 name: "",
@@ -38,31 +39,40 @@ class App extends Component {
     }
 
     componentWillMount() {
-        lichessService.getUserBlitzElo(this.state.user.lichess.name).then(elo => {
-            const user = this.state.user
-            user.lichess.elo = elo
-            this.setState({user : user})
-        })
-        chessDotComService.getUserBlitzElo(this.state.user.chessDotCom.name).then(elo => {
-            const user = this.state.user
-            console.log(elo)
-            user.chessDotCom.elo = elo
-            this.setState({user : user})
-        })
-        lichessService.getTotalGamesPlayed(this.state.user.lichess.name).then(count => {
-            const user = this.state.user
-            user.lichess.total_games = count
-            this.setState({user : user})
-        })
-        chessDotComService.getTotalGamesPlayed(this.state.user.chessDotCom.name).then(count => {
-            console.log(count)
-            const user = this.state.user
-            user.chessDotCom.total_games = count
-            this.setState({user : user})
-        })
+        this.fetchInfo()
+        if(this.state.userLoggedIn){
+            lichessService.getUserBlitzElo(this.state.user.lichess.name).then(elo => {
+                const user = this.state.user
+                user.lichess.elo = elo
+                this.setState({user : user})
+            })
+            chessDotComService.getUserBlitzElo(this.state.user.chessDotCom.name).then(elo => {
+                const user = this.state.user
+                console.log(elo)
+                user.chessDotCom.elo = elo
+                this.setState({user : user})
+            })
+            lichessService.getTotalGamesPlayed(this.state.user.lichess.name).then(count => {
+                const user = this.state.user
+                user.lichess.total_games = count
+                this.setState({user : user})
+            })
+            chessDotComService.getTotalGamesPlayed(this.state.user.chessDotCom.name).then(count => {
+                console.log(count)
+                const user = this.state.user
+                user.chessDotCom.total_games = count
+                this.setState({user : user})
+            })
+        }
+
         console.log("Mount")
     }
 
+    fetchInfo = async () => {
+        const request = axios.get("http://localhost:2000/api/users/info")
+        const data = await request.then(res => res.data)
+        this.setState({info: data})
+    }
 
     logUserIn = () => async (event) => {
         event.preventDefault()
@@ -79,6 +89,7 @@ class App extends Component {
             user.chessDotCom.name = data.chessDotComName
             user.lichess.name = data.lichessName
             user.major = data.major
+            user.r2play = data.r2play
             this.setState({user: user})
             this.setState({userLoggedIn: true})
             this.componentWillMount()
@@ -135,20 +146,21 @@ class App extends Component {
                 password: "",
                 lichess: {
                 name:"",
-                    elo: "",
-                    total_games: 0
+                elo: 0,
+                total_games: 0
             },
             chessDotCom: {
                 name: "",
-                    elo: "",
+                    elo: 0,
                     total_games: 0
             }
         }
         this.setState({user})
         this.setState({userLoggedIn: false})
+        this.fetchInfo()
     }
 
-    toggleR2P = () => () => {
+    toggleR2P = () => async () => {
         const user = this.state.user
         const ready = user.r2play
         if(ready){
@@ -157,6 +169,18 @@ class App extends Component {
             user.r2play = true
         }
         this.setState({user: user})
+        const puttable = {
+            name: this.state.user.name,
+            chessDotComName: this.state.user.chessDotCom.name,
+            lichessName: this.state.user.lichess.name,
+            major: this.state.user.major,
+            r2play: user.r2play,
+            password: this.state.user.password
+        }
+        const request = axios.put(`http://localhost:2000/api/users/${this.state.user.name}`, puttable)
+        const data = await request.then(response => response.data)
+        console.log(data)
+        console.log(user.r2play)
     }
 
     render() {
@@ -206,12 +230,15 @@ class App extends Component {
                 </header>
 
 
+                {false ? "" : <Info
+                                                    totalUsers={this.state.info.totalUsers}
+                                                    readyUsers={this.state.info.usersReady}/>}
                 {profile}
                 <div className="loginDialog">{sayLogin}</div>
                 <div>{login}</div>
                 <div className="loginDialog">{or}</div>
                 <div>{signup}</div>
-                <ActionBar/>
+
             </div>
         );
     }
