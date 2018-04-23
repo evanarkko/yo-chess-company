@@ -5,10 +5,12 @@ import chessIcon from './images/chess_icon.png'
 import hyPicture from './images/helsingin_yliopisto_logo.png'
 import lichessService from './services/lichess'
 import chessDotComService from './services/chessDotCom'
+import messageService from './services/messages_service'
 import Login from './comps/Login'
 import Signup from './comps/Signup'
 import Info from './comps/publicInfo'
 import Profile from './comps/profileView'
+import Chat from './comps/Chat'
 import './App.css';
 import axios from 'axios'
 
@@ -22,7 +24,7 @@ class App extends Component {
                 name: "",
                 password: "",
                 lichess: {
-                    name:"",
+                    name: "",
                     elo: "",
                     total_games: 0
                 },
@@ -34,38 +36,49 @@ class App extends Component {
                 elo: 1400,
                 r2play: false,
                 major: ""
-            }
+            },
+            messages: {}
         }
+        console.log(this.state)
     }
 
     componentWillMount() {
         this.fetchInfo()
-        if(this.state.userLoggedIn){
+        /*try {
+            this.setState({userLoggedIn: JSON.parse(window.localStorage.getItem('userLoggedIn'))})
+            this.setState({user: JSON.parse(window.localStorage.getItem('loggedUser'))})
+
+        } catch (e) {
+            console.log(e)
+        }*/
+        if (JSON.parse(window.localStorage.getItem('userLoggedIn'))) {
             lichessService.getUserBlitzElo(this.state.user.lichess.name).then(elo => {
                 const user = this.state.user
                 user.lichess.elo = elo
-                this.setState({user : user})
+                this.setState({user: user})
             })
             chessDotComService.getUserBlitzElo(this.state.user.chessDotCom.name).then(elo => {
                 const user = this.state.user
-                console.log(elo)
                 user.chessDotCom.elo = elo
-                this.setState({user : user})
+                this.setState({user: user})
             })
             lichessService.getTotalGamesPlayed(this.state.user.lichess.name).then(count => {
                 const user = this.state.user
                 user.lichess.total_games = count
-                this.setState({user : user})
+                this.setState({user: user})
             })
             chessDotComService.getTotalGamesPlayed(this.state.user.chessDotCom.name).then(count => {
-                console.log(count)
                 const user = this.state.user
                 user.chessDotCom.total_games = count
-                this.setState({user : user})
+                this.setState({user: user})
+            })
+            messageService.getMessages().then(data => {
+                this.setState({messages: data})
+                console.log(data)
+                console.log(this.state)
             })
         }
 
-        console.log("Mount")
     }
 
     fetchInfo = async () => {
@@ -82,7 +95,7 @@ class App extends Component {
         }
         const request = axios.post("http://localhost:2000/api/users/login", loginable)
         const data = await request.then(response => response.data)
-        if(data.name){
+        if (data.name) {
             console.log(data)
             const user = this.state.user
             user.name = data.name
@@ -92,15 +105,18 @@ class App extends Component {
             user.r2play = data.r2play
             this.setState({user: user})
             this.setState({userLoggedIn: true})
+            window.localStorage.setItem('loggedUser', JSON.stringify(user))
+            window.localStorage.setItem('userLoggedIn', true)
             this.componentWillMount()
-        }else{
-            console.log("fail")
+        } else {
+            console.log("fail at logging in")
         }
 
     }
 
     handleUsernameChange = () => (event) => {
         const user = this.state.user
+        console.log(this.state)
         user.name = event.target.value
         this.setState({user: user})
     }
@@ -143,29 +159,30 @@ class App extends Component {
     logout = () => (event) => {
         const user = {
             name: "",
-                password: "",
-                lichess: {
-                name:"",
+            password: "",
+            lichess: {
+                name: "",
                 elo: 0,
                 total_games: 0
             },
             chessDotCom: {
                 name: "",
-                    elo: 0,
-                    total_games: 0
+                elo: 0,
+                total_games: 0
             }
         }
         this.setState({user})
         this.setState({userLoggedIn: false})
+        window.localStorage.setItem('userLoggedIn', false)
         this.fetchInfo()
     }
 
     toggleR2P = () => async () => {
         const user = this.state.user
         const ready = user.r2play
-        if(ready){
+        if (ready) {
             user.r2play = false
-        }else{
+        } else {
             user.r2play = true
         }
         this.setState({user: user})
@@ -185,19 +202,28 @@ class App extends Component {
 
     render() {
         let profile = ""
-
+        let chat = ""
 
         let login = ""
         let signup = ""
         let or = ""
         let sayLogin = ""
 
-        if(this.state.userLoggedIn){
+        if (this.state.userLoggedIn) {
             profile = <Profile
-                            user={this.state.user}
-                            logoutFunc={this.logout()}
-                            toggleR2P={this.toggleR2P()}/>
-        }else{
+                user={this.state.user}
+                logoutFunc={this.logout()}
+                toggleR2P={this.toggleR2P()}/>
+            console.log('h')
+            console.log(this.state.messages)
+            chat = <Chat
+                messages={this.state.messages}
+                sendMessage={(event) => {
+                    event.preventDefault()
+                    messageService.sendMessage()
+                }}
+            />
+        } else {
             sayLogin = "Kirjaudu sisään"
             login = <Login loginFunction={this.logUserIn()}
                            nameFunction={this.handleUsernameChange()}
@@ -208,7 +234,7 @@ class App extends Component {
                              lichessFunction={this.handleLichessNameChange()}
                              chessDotComFunction={this.handleChessDotComNameChange()}
                              majorFunction={this.handleMajorChange()}
-                            signupFunction={this.signUp()}/>
+                             signupFunction={this.signUp()}/>
             or = "tai LIITY mukaan: "
 
         }
@@ -230,14 +256,15 @@ class App extends Component {
                 </header>
 
 
-                {false ? "" : <Info
-                                                    totalUsers={this.state.info.totalUsers}
-                                                    readyUsers={this.state.info.usersReady}/>}
+                {<Info
+                    totalUsers={this.state.info.totalUsers}
+                    readyUsers={this.state.info.usersReady}/>}
                 {profile}
                 <div className="loginDialog">{sayLogin}</div>
                 <div>{login}</div>
                 <div className="loginDialog">{or}</div>
                 <div>{signup}</div>
+                <div>{chat}</div>
 
             </div>
         );
